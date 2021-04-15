@@ -198,7 +198,10 @@ def _yolov5_darknet_pan(
         if model_urls.get(weights_name, None) is None:
             raise ValueError(f"No checkpoint is available for model {weights_name}")
         state_dict = load_state_dict_from_url(model_urls[weights_name], progress=progress)
-        model.load_state_dict(state_dict)
+        
+        if num_classes != 80:
+            state_dict = { k: v for k, v in state_dict.items() if not "head" in k}
+        model.load_state_dict(state_dict, strict=False)
 
     return model
 
